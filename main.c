@@ -1,5 +1,4 @@
 #include <stdio.h>
-#include <stdlib.h>
 #include <string.h>
 
 #define MAX_TACHES 100
@@ -19,11 +18,12 @@ typedef struct {
 
 void creer(tache *t, int *n) {
     int nombreNouvellesTaches;
-    printf("Combien de taches voulez-vous creer ? ");
+    printf("Combien de tâches voulez-vous créer ? ");
     scanf("%d", &nombreNouvellesTaches);
 
-    if (nombreNouvellesTaches + *n > MAX_TACHES || nombreNouvellesTaches < 0) {
-        printf("Vous ne pouvez pas creer plus de %d tâches ou un nombre négatif\n", MAX_TACHES);
+    // Vérification de la validité du nombre de nouvelles tâches
+    if (nombreNouvellesTaches < 0 || nombreNouvellesTaches + *n > MAX_TACHES) {
+        printf("Vous ne pouvez pas créer plus de %d tâches ou un nombre négatif.\n", MAX_TACHES);
         return;
     }
 
@@ -32,8 +32,19 @@ void creer(tache *t, int *n) {
         scanf(" %[^\n]", t[i].titre);
         printf("Saisir la description : ");
         scanf(" %[^\n]", t[i].description);
-        printf("Saisir la priorité : ");
-        scanf(" %[^\n]", t[i].priorite);
+
+        char priorite[20];
+        do {
+            printf("Saisir la priorité (low/high) : ");
+            scanf(" %[^\n]", priorite);
+
+            if (strcmp(priorite, "low") != 0 && strcmp(priorite, "high") != 0) {
+                printf("Priorité invalide, veuillez choisir 'low' ou 'high'.\n");
+            }
+        } while (strcmp(priorite, "low") != 0 && strcmp(priorite, "high") != 0);
+
+        strcpy(t[i].priorite, priorite);
+
         printf("Saisir le jour : ");
         scanf("%d", &t[i].date.jour);
         printf("Saisir le mois : ");
@@ -42,7 +53,6 @@ void creer(tache *t, int *n) {
         scanf("%d", &t[i].date.annee);
         printf("----------------------------\n");
     }
-
 
     *n += nombreNouvellesTaches;
 }
@@ -56,6 +66,8 @@ void afficher(tache *t, int n) {
     }
 
     printf("Voici l'affichage des taches : \n");
+     printf("---------------------\n");
+     printf("---------------------\n");
     for (int i = 0; i < n; i++) {
         printf("Tache %d:\n", i + 1);
         printf("Titre : %s\n", t[i].titre);
@@ -73,32 +85,54 @@ void modifier(tache *t , int n){
         return;
     }
     int index;
+    char choice[15];
     printf("quel est le numero du tache que vous souaithez de modifier : %d",index);
     scanf("%d",&index);
 
     if (index < 1 || index > n) {
-        printf("Numéro de tâche invalide.\n");
+        printf("Numero de tache invalide.\n");
         return;
     }
+    printf("qu'est ce que tu veux modifier (titre , description , priorite , date\n)");
+    printf("choisis qu'est ce que tu veux modifier : %d",choice);
+    scanf("%s",choice);
 
         index--;
-
+        if(strcmp(choice,"titre")==0){
         printf("Saisir le titre : ");
-        scanf(" %[^\n]", t[index].titre);
+        scanf(" %[^\n]", t[index].titre);}
+        else if(strcmp(choice,"description")==0){
         printf("Saisir la description  : ");
-        scanf(" %[^\n]", t[index].description);
+        scanf(" %[^\n]", t[index].description);}
+        else if(strcmp(choice,"priorite")==0){
         printf("Saisir la priorite  : ");
-        scanf(" %[^\n]", t[index].priorite);
-
+        scanf(" %[^\n]", t[index].priorite);}
+        else if(strcmp(choice,"date")==0){
         printf("Saisir le jour : ");
         scanf("%d", &t[index].date.jour);
         printf("Saisir le mois : ");
         scanf("%d", &t[index].date.mois);
         printf("Saisir l'année : ");
-        scanf("%d", &t[index].date.annee);
+        scanf("%d", &t[index].date.annee);}
 
 
 }
+
+void supprimer(tache *t, int *n) {
+    int index;
+    printf("Tapez le numero de la tache que vous souhaitez supprimer : ");
+    scanf("%d", &index);
+
+    if (index > 0 && index <= *n) {
+        for (int i = index - 1; i < *n - 1; i++) {
+            t[i] = t[i + 1];
+        }
+        (*n)--;
+    } else {
+        printf("C'est un numéro invalide\n");
+    }
+}
+
 
 int main() {
     int n = 0;
@@ -108,7 +142,8 @@ int main() {
     do {
         int choix;
         printf("Que voulez-vous choisir ?\n");
-        printf("1. Creer une tache  \n2. Afficher les taches \n3.modifier une tache \n4. Quitter\n");
+        printf("1. Creer une tache  \n2. Afficher les taches \n3. modifier une tache \n4. supprimer\n5 .Quitter \n");
+        printf("--------------------------------\n");
         printf("ecrire le numero : ");
         scanf("%d", &choix);
 
@@ -122,7 +157,10 @@ int main() {
             case 3:
                 modifier(t,n);
                 break;
-            case 4:
+            case 4 :
+                supprimer(t,&n);
+                break;
+            case 5:
                 running = 0;
                 break;
             default:
