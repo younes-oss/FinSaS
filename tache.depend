@@ -1,6 +1,6 @@
 # depslib dependency file v1.0
-1730380444 source:c:\users\aitch\onedrive\documents\structure\tache\main.c
+1730470004 source:c:\users\aitch\onedrive\documents\structure\tache\main.c
 	<stdio.h>
-	<stdlib.h>
 	<string.h>
+	<stdbool.h>
 

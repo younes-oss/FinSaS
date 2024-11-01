@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <string.h>
+#include <stdbool.h>
 
 #define MAX_TACHES 100
 
@@ -18,6 +19,7 @@ typedef struct {
 
 void creer(tache *t, int *n) {
     int nombreNouvellesTaches;
+    int j = 0;
     printf("Combien de tâches voulez-vous créer ? ");
     scanf("%d", &nombreNouvellesTaches);
 
@@ -133,19 +135,57 @@ void supprimer(tache *t, int *n) {
     }
 }
 
+void filtrer(tache *t, int *n) {
+    char choixPriorite[20];
+    printf("tu vas filtrer par la priorite\n");
+    printf("Choisissez une priorite a filtrer (low ou high) : ");
+    scanf(" %[^\n]", choixPriorite);
+
+    printf("Voici les taches avec la priorite '%s' :\n", choixPriorite);
+    for (int i = 0; i < *n; i++) {
+        if (strcmp(t[i].priorite, choixPriorite) == 0) {
+            printf("Tache %d:\n", i + 1);
+            printf("Titre : %s\n", t[i].titre);
+            printf("Description : %s\n", t[i].description);
+            printf("Priorité : %s\n", t[i].priorite);
+            printf("Date : %02d/%02d/%04d\n", t[i].date.jour, t[i].date.mois, t[i].date.annee);
+            printf("---------------------\n");
+        }
+    }
+}
+
+int validInt ( char choix[20] );
 
 int main() {
     int n = 0;
     tache t[MAX_TACHES];
+    // int choix;
+    int choix;
+    char choixInput[20];
+
+
 
     _Bool running = 1;
     do {
-        int choix;
         printf("Que voulez-vous choisir ?\n");
-        printf("1. Creer une tache  \n2. Afficher les taches \n3. modifier une tache \n4. supprimer\n5 .Quitter \n");
+        printf("1. Creer une tache  \n2. Afficher les taches \n3. modifier une tache \n4. supprimer\n5. filtrer \n6 .quitter\n");
         printf("--------------------------------\n");
         printf("ecrire le numero : ");
-        scanf("%d", &choix);
+        scanf("%s", &choixInput);
+
+        _Bool validating = true;
+
+
+        do {
+            if ( validInt( choixInput ) ) {
+                printf("this is valide\n");
+                validating = false;
+                choix = validInt( choixInput );
+            } else {
+                printf("Please enter a valid number, allowed numbers (1,2,3,4,5,6) ");
+                scanf("%s", &choixInput);
+            }
+        } while( validating );
 
         switch (choix) {
             case 1:
@@ -161,6 +201,9 @@ int main() {
                 supprimer(t,&n);
                 break;
             case 5:
+                filtrer(t,&n);
+                break;
+            case 6:
                 running = 0;
                 break;
             default:
@@ -172,3 +215,22 @@ int main() {
 
     return 0;
 }
+
+int validInt ( char choix[20] ) {
+    int isValid = 1;
+    int num;
+    for ( int i = 0; i < strlen(choix); i++) {
+        if ( !isdigit(choix[i]) ) {
+            isValid = 0;
+            break;
+        }
+    }
+
+    if ( isValid ) {
+        num = atoi(choix);
+        return num;
+    } else {
+        return 0;
+    }
+}
+
